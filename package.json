@@ -1,0 +1,15 @@
+{
+  "name": "siegebot-youtube",
+  "version": "0.0.1",
+  "description": "Youtube plugin for Siegebot",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "keywords": [
+    "siegebot",
+    "youtube"
+  ],
+  "author": "Siege",
+  "license": "MIT"
+}
