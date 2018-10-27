@@ -2,7 +2,8 @@ var http = require('https');
 
 module.exports = {
 	search: search,
-	description: "Searches for a Youtube video based on your message."
+	description: "Searches for a Youtube video based on your message.",
+	arguments: "<your video search here>"
 }
 
 function search(message, config)
@@ -16,7 +17,7 @@ function searchPromise(message, config, callback) {
 	var query = message.content.substring(message.content.indexOf(' ')).trim().replace(/ /g, "%20");
 	http.get({
 			host: "www.googleapis.com",
-			path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&key=" + config.youtube.key + "&q=" + query
+			path: "/youtube/v3/search?part=snippet&maxResults=1&type=video&key=" + config.key + "&q=" + query
 		},
 		function(response) {
 			var body = '';
@@ -30,7 +31,7 @@ function searchPromise(message, config, callback) {
 				var responseText = "";
 				if (data["items"] && data["items"][0] && data["items"][0]["id"] && data["items"][0]["id"]["videoId"])
 				{
-                    responseText = config.youtube.successMessage;
+                    responseText = config.successMessage;
 
                     if (!responseText)
                     {
@@ -44,7 +45,7 @@ function searchPromise(message, config, callback) {
 				}
 				else
 				{
-                    responseText = config.youtube.failureMessage;
+                    responseText = config.failureMessage;
 
                     if (!responseText)
                     {
