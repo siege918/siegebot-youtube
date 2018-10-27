@@ -3,7 +3,7 @@ const assert = require('assert');
 
 var mockMessage = {
     author: "@TESTUSER",
-    content: ":youtube BoringTrousers My Life Me",
+    content: ":youtube boringtrousers my life me",
     channel: {
         send: function (message) { return true; }
     }
@@ -11,30 +11,28 @@ var mockMessage = {
 
 var key = process.argv[2];
 
-youtube(mockMessage, { youtube: { key: key } }, function (response) {
+youtube["search"](mockMessage, { youtube: { key: key } })
+.then(function (response) {
     assert.strictEqual(response, "@TESTUSER, https://www.youtube.com/watch?v=WMbixFBa2M4", "Default success message not populating correctly");
+    return youtube["search"](
+        mockMessage,
+        { youtube: { key: key, successMessage: "{mention} {mention} {mention} {videoLink} {videoLink} {mention}" } },
+    );
+})
+.then( function(response) {
+    assert.strictEqual(response, "@TESTUSER @TESTUSER @TESTUSER https://www.youtube.com/watch?v=WMbixFBa2M4 https://www.youtube.com/watch?v=WMbixFBa2M4 @TESTUSER", "Custom success message not populating correctly");
+    return youtube["search"](
+        Object.assign({}, mockMessage, { content: ":youtube habababalagarabagatatatara" }),
+        { youtube: { key: key } }
+    );
+})
+.then( function(response) {
+    assert.strictEqual(response, "Sorry, @TESTUSER, I couldn't find a video for that...", "Standard failure message not populating correctly");
+    return youtube["search"](
+        Object.assign({}, mockMessage, { content: ":youtube habababalagarabagatatatara" }),
+        { youtube: { key: key, failureMessage: "{mention} {mention} {mention} {mention}" } }
+    );
+})
+.then( function(response) {
+    assert.strictEqual(response, "@TESTUSER @TESTUSER @TESTUSER @TESTUSER", "Custom failure message not populating correctly");
 });
-
-youtube(
-    Object.assign({}, mockMessage, { content: ":youtube habababalagarabagatatatara" }),
-    { youtube: { key: key } },
-    function (response) {
-        assert.strictEqual(response, "Sorry, @TESTUSER, I couldn't find a video for that...", "Default failure message not populating correctly");
-    }
-);
-
-youtube(
-    mockMessage,
-    { youtube: { key: key, successMessage: "{mention} {mention} {mention} {videoLink} {videoLink} {mention}" } },
-    function (response) {
-        assert.strictEqual(response, "@TESTUSER @TESTUSER @TESTUSER https://www.youtube.com/watch?v=WMbixFBa2M4 https://www.youtube.com/watch?v=WMbixFBa2M4 @TESTUSER", "Custom success message not populating correctly");
-    }
-);
-
-youtube(
-    Object.assign({}, mockMessage, { content: ":youtube habababalagarabagatatatara" }),
-    { youtube: { key: key, failureMessage: "{mention} {mention} {mention} {mention}" } },
-    function (response) {
-        assert.strictEqual(response, "@TESTUSER @TESTUSER @TESTUSER @TESTUSER", "Custom failure message not populating correctly");
-    }
-);

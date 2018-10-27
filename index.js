@@ -1,7 +1,18 @@
 var http = require('https');
 
-module.exports = function(message, config, callback) {
-	
+module.exports = {
+	search: search,
+	description: "Searches for a Youtube video based on your message."
+}
+
+function search(message, config)
+{
+	return new Promise(function(resolve) {
+		searchPromise(message, config, resolve);
+	});
+}
+
+function searchPromise(message, config, callback) {
 	var query = message.content.substring(message.content.indexOf(' ')).trim().replace(/ /g, "%20");
 	http.get({
 			host: "www.googleapis.com",
